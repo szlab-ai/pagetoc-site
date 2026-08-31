@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Prose from '../../components/Prose.astro';
+
+// 与 en/privacy.astro、App 内 PrivacyView.swift 是同一份内容。改一处要三处一起改。
+---
+<BaseLayout
+  title="隐私政策 — PageTOC for Safari"
+  description="PageTOC 如何处理你的数据：什么都不收集。没有账号、没有统计、没有崩溃上报、没有服务器，扩展里也没有任何网络代码。"
+  lang="zh"
+  page="privacy"
+>
+  <Prose title="隐私政策">
+    <p class="text-sm text-muted">最后更新：2026 年 8 月 30 日</p>
+
+    <h2>一句话</h2>
+    <p>PageTOC 不收集任何数据。没有账号、没有统计、没有崩溃上报、没有服务器。扩展中不含任何网络代码——没有 <code>fetch</code>、没有 <code>XMLHttpRequest</code>、没有 WebSocket、没有 <code>sendBeacon</code>——App 自身也不发起任何网络请求。PageTOC 做的一切都在你的设备上完成。</p>
+
+    <h2>为什么需要访问网页</h2>
+    <p>目录是从页面自身的标题层级生成的，因此 PageTOC 必须读取你正在看的页面。权限的用途仅此而已：在你的设备上，在你查看这个页面时，读取它的结构。</p>
+    <p>访问权限由 Safari 按站点授予，且仅在你使用它时生效。你没有唤起它的页面上，它不运行。</p>
+
+    <h2>存储在你设备上的内容</h2>
+    <ul>
+      <li>你的设置：目录层级深度、是否显示悬浮球。</li>
+      <li>你选择隐藏 PageTOC 的站点——只在你主动隐藏时写入，可在 App 中删除。</li>
+      <li>你把面板或悬浮球拖到的位置，按站点记住。</li>
+    </ul>
+    <p>这些数据由操作系统保存在 App 自己的容器和扩展的本地存储中，不会被传输到任何地方。删除 PageTOC 即全部删除。</p>
+
+    <h2>从不存储的内容</h2>
+    <ul>
+      <li>你访问过的页面网址。</li>
+      <li>你读到了哪里，或当前处在哪个标题。</li>
+      <li>页面中的任何文字或其他内容。</li>
+      <li>任何标识你或你设备的信息。</li>
+    </ul>
+    <p>被隐藏的站点是你主动创建的一条记录，以来源形式存储（例如 <code>https://example.com</code>），从不存储具体页面地址。</p>
+
+    <h2>第三方</h2>
+    <p>没有。不含任何第三方 SDK、广告、归因框架或任何形式的追踪。不与任何人共享任何东西，因为什么都没有收集。</p>
+
+    <h2>发送反馈</h2>
+    <p>如果你给支持邮箱写信，邮件内容就是你自己写的内容，加上主题行里的 App 版本号。这封邮件进入的是一个人的收件箱，不经过任何工单系统。除了你自己输入或粘贴的内容，不会预填任何来自你浏览行为的信息。</p>
+
+    <h2>儿童</h2>
+    <p>PageTOC 分级为 4+，不向任何人收集数据，儿童亦然。</p>
+
+    <h2>如何自行验证</h2>
+    <p>把 PageTOC 放在 HTTP 代理后运行，你会看到它完全不产生任何流量。</p>
+
+    <h2>变更</h2>
+    <p>如果未来某个版本要把任何数据发出设备，本政策与 App Store 隐私标签会在该版本<strong>提交之前</strong>更新，并在版本说明中写明。</p>
+
+    <h2>联系方式</h2>
+    <p><a href="mailto:szlab.ai@outlook.com">szlab.ai@outlook.com</a></p>
+  </Prose>
+</BaseLayout>

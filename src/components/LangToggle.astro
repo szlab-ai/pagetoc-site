@@ -1,0 +1,16 @@
+---
+const { lang } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const path = Astro.url.pathname;                      // 形如 /pagetoc-site/en/support/
+
+// 404 页面没有 locale 段（/pagetoc-site/404/），正则替换会原样返回，两个语言链接
+// 于是都指回 404 本身 —— 一个看得见、点了没反应的控件。匹配不上就回落到各自首页。
+const hasLocale = /\/(en|zh)(\/|$)/.test(path);
+const toEn = hasLocale ? path.replace(/\/(en|zh)(\/|$)/, '/en$2') : `${base}en/`;
+const toZh = hasLocale ? path.replace(/\/(en|zh)(\/|$)/, '/zh$2') : `${base}zh/`;
+---
+<div class="flex items-center gap-1.5 text-sm">
+  <a href={toEn} class={lang === 'en' ? 'font-semibold text-accent' : 'text-muted hover:text-ink'}>EN</a>
+  <span class="text-line">/</span>
+  <a href={toZh} class={lang === 'zh' ? 'font-semibold text-accent' : 'text-muted hover:text-ink'}>中文</a>
+</div>

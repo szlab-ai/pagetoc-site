@@ -1,0 +1,59 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Prose from '../../components/Prose.astro';
+
+// 与 en/support.astro 同构：faq 数组同时喂给可见正文和 FAQPage 结构化数据。
+const faq = [
+  {
+    q: '运行 PageTOC 需要什么？',
+    a: 'iOS 17 及以上、iPadOS 17 及以上，或 macOS 14 及以上版本的 Safari。',
+  },
+  {
+    q: '怎么打开它？',
+    a: 'iPhone 与 iPad：设置 → Safari 浏览器 → 扩展，打开 PageTOC。较新版本的 iOS 会先把 Safari 收进「应用程序」里。Mac：Safari 浏览器 → 设置 → 扩展。之后第一次在某个站点使用时 Safari 会询问权限，选「始终允许」后就不再对该站点询问。',
+  },
+  {
+    q: '怎么唤出目录？',
+    a: 'iPhone 与 iPad 上点悬浮球。Mac 上按 ⌘⇧E，或点 Safari 工具栏里的 PageTOC 按钮。',
+  },
+  {
+    q: '某个页面的目录是空的，为什么？',
+    a: '常见的三种原因。Safari 不允许扩展在阅读器视图和原生 PDF 中运行，这两处 PageTOC 无法工作。另外，用样式把普通文字装成标题、而没有使用真实标题标签的页面，PageTOC 读不到任何东西。如果这发生在你在意的页面上，把网址发给我们——因为没有任何统计，这是我们唯一能知道的途径。',
+  },
+  {
+    q: '我误把某个站点隐藏了，怎么恢复？',
+    a: '打开 PageTOC App，在「屏蔽的站点」里把它删掉。那份名单是被隐藏站点唯一的记录处，也是唯一的撤销入口。',
+  },
+  {
+    q: '悬浮球不见了？',
+    a: '要么是它被关掉了——App 里有一项设置控制是否显示悬浮球；要么是这个站点在「屏蔽的站点」里。两处都在 App 中。',
+  },
+  {
+    q: 'PageTOC 会把什么东西发出去吗？',
+    a: '不会。扩展里根本没有任何网络代码，App 自身也不发起任何网络请求。你可以自己验证：把它挂在 HTTP 代理后面跑一遍，看它完全不产生流量。',
+  },
+];
+---
+<BaseLayout
+  title="支持 — PageTOC for Safari"
+  description="PageTOC 使用帮助：系统要求、如何在 Safari 中启用扩展、目录为什么会是空的，以及如何联系我们。"
+  lang="zh"
+  page="support"
+  faq={faq}
+>
+  <Prose title="支持">
+    <p class="text-sm text-muted">为 Safari 里的任何长网页生成目录</p>
+
+    <p class="text-xs font-semibold uppercase tracking-wide text-muted">联系方式</p>
+    <p><a href="mailto:szlab.ai@outlook.com">szlab.ai@outlook.com</a></p>
+    <p>通常几个工作日内回复。如果你要报告某个目录为空的页面，请带上网址——PageTOC 什么都不收集，我们看不到的页面就修不了。</p>
+
+    <h2>常见问题</h2>
+    {faq.map((item) => (
+      <div>
+        <h3>{item.q}</h3>
+        <p set:html={item.a} />
+      </div>
+    ))}
+  </Prose>
+</BaseLayout>

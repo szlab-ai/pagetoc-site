@@ -1,0 +1,23 @@
+---
+import LangToggle from './LangToggle.astro';
+import { useTranslations } from '../i18n/utils';
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = import.meta.env.BASE_URL;                 // '/pagetoc-site/'
+const home = `${base}${lang}/`;
+---
+<header class="sticky top-0 z-10 border-b border-line bg-bg/90 backdrop-blur">
+  <nav class="mx-auto flex max-w-5xl items-center justify-between gap-4 px-5 py-3">
+    <a href={home} class="inline-flex shrink-0 items-center gap-2 text-lg font-bold tracking-tight">
+      <img src={`${base}brand/pagetoc.png`} alt="" width="28" height="28" class="h-7 w-7" />
+      <span>PageTOC</span>
+    </a>
+    <div class="flex items-center gap-4 text-sm sm:gap-5">
+      <a href={`${home}#features`} class="hidden text-muted hover:text-ink sm:inline">{t('nav.features')}</a>
+      <a href={`${home}#how`} class="hidden text-muted hover:text-ink sm:inline">{t('nav.how')}</a>
+      <a href={`${base}${lang}/privacy/`} class="text-muted hover:text-ink">{t('nav.privacy')}</a>
+      <a href={`${base}${lang}/support/`} class="text-muted hover:text-ink">{t('nav.support')}</a>
+      <LangToggle lang={lang} />
+    </div>
+  </nav>
+</header>

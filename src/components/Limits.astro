@@ -1,0 +1,15 @@
+---
+import { useTranslations } from '../i18n/utils';
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+{/* 放在首页而不是藏进 FAQ：阅读器视图和伪标题页面是这个产品最常见的两种落空，
+    用户在下载前就该知道，否则它变成一星评论。 */}
+<section class="mx-auto max-w-content px-5 py-16">
+  <h2 class="text-2xl font-semibold">{t('limits.heading')}</h2>
+  <ul class="mt-6 space-y-3 leading-relaxed text-muted">
+    <li class="border-l-2 border-line pl-4">{t('limits.reader')}</li>
+    <li class="border-l-2 border-line pl-4">{t('limits.headings')}</li>
+    <li class="border-l-2 border-line pl-4">{t('limits.tell')}</li>
+  </ul>
+</section>

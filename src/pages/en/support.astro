@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Prose from '../../components/Prose.astro';
+
+// FAQ 是可见正文与 FAQPage 结构化数据的唯一来源：Google 要求 schema 里的问答与
+// 页面上肉眼可见的内容一致，所以两边都从这个数组渲染，避免改一处忘另一处。
+const faq = [
+  {
+    q: 'What do I need to run PageTOC?',
+    a: 'Safari on iOS 17 or later, iPadOS 17 or later, or macOS 14 or later.',
+  },
+  {
+    q: 'How do I turn it on?',
+    a: 'On iPhone and iPad: Settings → Safari → Extensions, and switch PageTOC on. Newer versions of iOS put Safari under Apps first. On Mac: Safari → Settings → Extensions. Safari then asks for permission the first time you use PageTOC on a site; choosing “Always Allow” means it stops asking for that site.',
+  },
+  {
+    q: 'How do I open the table of contents?',
+    a: 'On iPhone and iPad, tap the floating button. On Mac, press ⌘⇧E, or use the PageTOC button in Safari’s toolbar.',
+  },
+  {
+    q: 'The outline is empty on a page. Why?',
+    a: 'Three common reasons. Safari does not let extensions run in Reader view or on native PDFs, so PageTOC cannot work in either. And a page that styles ordinary text to look like headings, instead of using real heading tags, gives PageTOC nothing to read. If it happens on a page you care about, send us the address — with no analytics of any kind, that is the only way we find out.',
+  },
+  {
+    q: 'I hid PageTOC on a site by mistake. How do I get it back?',
+    a: 'Open the PageTOC app and remove the site from Blocked Sites. That list is the only place hidden sites are recorded, and the only way to undo it.',
+  },
+  {
+    q: 'Where did my floating button go?',
+    a: 'Either it is switched off — the app has a setting for whether the floating button is shown — or the site is in Blocked Sites. Both are in the app.',
+  },
+  {
+    q: 'Does PageTOC send anything anywhere?',
+    a: 'No. The extension contains no networking code at all, and the app makes no network calls. You can verify it yourself by running PageTOC behind an HTTP proxy and watching it produce no traffic.',
+  },
+];
+---
+<BaseLayout
+  title="Support — PageTOC for Safari"
+  description="Get help with PageTOC: system requirements, turning the extension on in Safari, why an outline can come up empty, and how to reach us."
+  lang="en"
+  page="support"
+  faq={faq}
+>
+  <Prose title="Support">
+    <p class="text-sm text-muted">A table of contents for any long page in Safari</p>
+
+    <p class="text-xs font-semibold uppercase tracking-wide text-muted">Contact</p>
+    <p><a href="mailto:szlab.ai@outlook.com">szlab.ai@outlook.com</a></p>
+    <p>We usually reply within a few business days. If you are reporting a page where the outline came up empty, please include the address — PageTOC collects nothing, so a page we cannot see is a page we cannot fix.</p>
+
+    <h2>Frequently asked questions</h2>
+    {faq.map((item) => (
+      <div>
+        <h3>{item.q}</h3>
+        <p set:html={item.a} />
+      </div>
+    ))}
+  </Prose>
+</BaseLayout>

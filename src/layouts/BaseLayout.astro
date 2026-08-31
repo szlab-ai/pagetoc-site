@@ -1,0 +1,66 @@
+---
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { buildSchema } from '../lib/schema';
+
+const { title, description, lang, page = 'home', faq } = Astro.props;
+const base = import.meta.env.BASE_URL;
+const site = Astro.site ?? Astro.url.origin;
+const canonical = new URL(Astro.url.pathname, site);
+const enURL = new URL(Astro.url.pathname.replace(/\/(en|zh)(\/|$)/, '/en$2'), site);
+const zhURL = new URL(Astro.url.pathname.replace(/\/(en|zh)(\/|$)/, '/zh$2'), site);
+
+// 社交卡片用真实产品截图而不是 256px 的图标：图标在 summary_large_image 里会被
+// 拉伸留白，抓取方也读不出这个产品到底是什么。
+const socialImage = new URL(`${base}screenshots/panel-light.png`, site);
+const ogLocale = lang === 'zh' ? 'zh_CN' : 'en_US';
+const alternateLocale = lang === 'zh' ? 'en_US' : 'zh_CN';
+const socialImageAlt = lang === 'zh'
+  ? 'Mac 版 Safari 中的长文，旁边打开着 PageTOC 目录面板'
+  : 'A long article in Safari on Mac with the PageTOC outline panel open beside it';
+
+const schema = buildSchema({ lang, page, site, base, canonical: canonical.href, title, description, faq });
+---
+<!doctype html>
+<html lang={lang === 'zh' ? 'zh-Hans' : 'en'}>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content={description} />
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1" />
+  <link rel="canonical" href={canonical.href} />
+  <link rel="alternate" hreflang="en" href={enURL.href} />
+  <link rel="alternate" hreflang="zh-Hans" href={zhURL.href} />
+  <link rel="alternate" hreflang="x-default" href={enURL.href} />
+  <link rel="icon" href={`${base}brand/favicon.ico`} sizes="any" />
+  <link rel="icon" type="image/png" href={`${base}brand/icon-32.png`} sizes="32x32" />
+  <link rel="apple-touch-icon" href={`${base}brand/apple-touch-icon.png`} />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0d1219" media="(prefers-color-scheme: dark)" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="PageTOC" />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:url" content={canonical.href} />
+  <meta property="og:locale" content={ogLocale} />
+  <meta property="og:locale:alternate" content={alternateLocale} />
+  <meta property="og:image" content={socialImage.href} />
+  <meta property="og:image:type" content="image/png" />
+  <meta property="og:image:width" content="2560" />
+  <meta property="og:image:height" content="1600" />
+  <meta property="og:image:alt" content={socialImageAlt} />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={socialImage.href} />
+  <meta name="twitter:image:alt" content={socialImageAlt} />
+  <title>{title}</title>
+  <script type="application/ld+json" is:inline set:html={JSON.stringify(schema)}></script>
+</head>
+<body class="bg-bg font-sans text-ink antialiased">
+  <Header lang={lang} />
+  <main><slot /></main>
+  <Footer lang={lang} />
+</body>
+</html>

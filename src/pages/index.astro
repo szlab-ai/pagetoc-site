@@ -1,0 +1,20 @@
+---
+// 根路径瞬时跳到默认 locale（英文首页）。GitHub Pages 是纯静态托管，做不了
+// 服务器端 301，所以用「content="0" 的 meta-refresh + 内联 location.replace」：
+// 有 JS 时脚本在 <head> 里立刻执行，几乎无感；没有 JS 时 meta 兜底。
+// body 留空，避免出现可见的 "Redirecting…"。canonical 指向 /en/，root 自身 noindex。
+const target = `${import.meta.env.BASE_URL}en/`;
+const canonical = new URL(target, Astro.site ?? Astro.url.origin);
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>PageTOC</title>
+  <meta name="robots" content="noindex" />
+  <meta http-equiv="refresh" content={`0; url=${target}`} />
+  <link rel="canonical" href={canonical.href} />
+  <script is:inline set:html={`location.replace(${JSON.stringify(target)})`}></script>
+</head>
+<body></body>
+</html>

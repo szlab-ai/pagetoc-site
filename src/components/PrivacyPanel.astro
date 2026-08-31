@@ -1,0 +1,26 @@
+---
+import { useTranslations } from '../i18n/utils';
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = import.meta.env.BASE_URL;
+---
+<section id="privacy" class="mx-auto max-w-5xl scroll-mt-16 px-5 py-16">
+  <div class="rounded-2xl border border-line bg-card p-8 sm:p-10">
+    <h2 class="text-2xl font-semibold">{t('privacy.heading')}</h2>
+    <p class="mt-4 max-w-3xl leading-relaxed text-muted">{t('privacy.lede')}</p>
+
+    <div class="mt-8 grid gap-6 sm:grid-cols-2">
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wide text-muted">{t('privacy.storedTitle')}</h3>
+        <p class="mt-2 leading-relaxed">{t('privacy.stored')}</p>
+      </div>
+      <div>
+        <h3 class="text-xs font-semibold uppercase tracking-wide text-muted">{t('privacy.neverTitle')}</h3>
+        <p class="mt-2 leading-relaxed">{t('privacy.never')}</p>
+      </div>
+    </div>
+
+    <p class="mt-8 border-t border-line pt-6 leading-relaxed text-muted">{t('privacy.verify')}</p>
+    <p class="mt-4"><a href={`${base}${lang}/privacy/`} class="font-medium text-accent">{t('privacy.link')} →</a></p>
+  </div>
+</section>

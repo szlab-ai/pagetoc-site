@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://szlab-ai.github.io/pagetoc-site/sitemap-index.xml

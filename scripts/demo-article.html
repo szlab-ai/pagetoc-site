@@ -1,0 +1,60 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>Designing for Long-Form Reading</title>
+<style>
+  :root { color-scheme: light dark; }
+  body { margin:0; font:17px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+         color:#1d1d1f; background:#fff; }
+  @media (prefers-color-scheme: dark){ body{ color:#e8e8ed; background:#141416; } }
+  .wrap { max-width: 44rem; margin: 0 auto; padding: 72px 32px 200px; }
+  h1 { font-size: 2.4rem; line-height:1.15; letter-spacing:-.02em; margin:0 0 .6em; }
+  h2 { font-size: 1.5rem; line-height:1.25; margin:2.4em 0 .5em; letter-spacing:-.01em; }
+  h3 { font-size: 1.15rem; margin:1.8em 0 .4em; }
+  p { margin: 0 0 1.1em; }
+  .lede { font-size:1.2rem; color:#6e6e73; }
+  @media (prefers-color-scheme: dark){ .lede{ color:#98989d; } }
+</style>
+<div class="wrap">
+<h1>Designing for Long-Form Reading</h1>
+<p class="lede">Notes on the parts of a document that only matter once it gets long enough to get lost in.</p>
+
+<h2>Why structure beats search</h2>
+<p>Search answers a question you already know how to ask. Structure answers the one you cannot phrase yet: where am I, and what else is here? A reader three screens into an unfamiliar specification has the second question, not the first.</p>
+<h3>The cost of scrolling blind</h3>
+<p>Every scroll without a landmark is a small act of faith. The reader is spending attention on navigation that should have gone to the argument.</p>
+<p>Multiply that by a forty-screen specification and the reader is no longer reading; they are administering the page.</p>
+<h3>What a good outline promises</h3>
+<p>Three things: the shape of the whole, the location of the part, and a way to move between them without losing either.</p>
+<p>It has to keep all three true while the reader moves, which is why an outline that is merely printed once at the top stops helping on the second screen.</p>
+
+<h2>Headings are an interface</h2>
+<p>Authors write headings for the page. Readers use them as controls. The gap between those two intentions is where most long documents fail.</p>
+<p>Treat the heading list as a control surface and the failures become obvious: duplicates, headings that are really labels, and levels that encode visual weight rather than meaning.</p>
+<h3>Hierarchy that survives skimming</h3>
+<p>Two levels are usually enough to hold a document in the head. A third is useful for reference material and actively harmful for prose.</p>
+<p>Depth should be the reader's choice, not the document's, because the same page is a reference for one person and a narrative for another.</p>
+<h3>Naming sections honestly</h3>
+<p>A heading that reads well in sequence and badly out of context is a heading that will not work in an outline.</p>
+<p>Write them so they survive being lifted out and stacked in a list, which is exactly what any outline will do to them.</p>
+
+<h2>Position, continuously</h2>
+<p>Knowing which section you are in is not the same as knowing how far through it you are. Both are cheap to show and expensive to guess.</p>
+<p>Position has to update continuously, not on click, or it becomes a record of where the reader last interacted rather than where they are.</p>
+<h3>Progress as a second signal</h3>
+<p>A count and a bar say different things. One is discrete and comparable; the other is continuous and glanceable.</p>
+<p>Together they answer “how much is left” and “how many of these are there” without the reader doing arithmetic.</p>
+
+<h2>Getting out of the way</h2>
+<p>The best state for a reading aid is dormant. It should be reachable in one gesture and invisible the rest of the time.</p>
+<p>Anything that occupies attention while not in use is competing with the text it exists to serve.</p>
+<h3>Where controls should live</h3>
+<p>Near the thumb on a phone, near the margin on a desk. Neither is a scaled version of the other.</p>
+<p>A phone wants a control that can be moved out of the way with one hand; a desk wants one that can sit open in the margin all session.</p>
+<h3>Remembering the reader's choice</h3>
+<p>If someone moves a control, that is a preference, not an accident. Put it back where they left it, per site.</p>
+<p>Per site, not globally: the right corner on a documentation site is the wrong corner on a news site with a sticky header.</p>
+
+<h2>What this cannot fix</h2>
+<p>A page with no headings has no structure to show. Styling text to look like a heading does not create one, and no amount of heuristics turns presentation back into meaning.</p>
+<p>Reader view and native PDF rendering are closed to extensions entirely, so those pages are out of reach no matter how good the heuristics get.</p>
+</div>

@@ -1,0 +1,60 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Prose from '../../components/Prose.astro';
+
+// 这一页与 App 内 PrivacyView.swift、以及 SimpleTOC 仓库的
+// design_handoff_pagetoc_v1/docs/privacy-policy.md 是同一份内容的三个副本。
+// 「从不存储」那四条是规范来源，改任何一处都要三处一起改。
+---
+<BaseLayout
+  title="Privacy Policy — PageTOC for Safari"
+  description="How PageTOC handles your data: it collects nothing. No account, no analytics, no crash reporting, no server, and no networking code in the extension at all."
+  lang="en"
+  page="privacy"
+>
+  <Prose title="Privacy Policy">
+    <p class="text-sm text-muted">Last updated: 30 August 2026</p>
+
+    <h2>The short version</h2>
+    <p>PageTOC collects nothing. There is no account, no analytics, no crash reporting, and no server. The extension contains no networking code — no <code>fetch</code>, no <code>XMLHttpRequest</code>, no WebSocket, no <code>sendBeacon</code> — and the app makes no network calls of its own. Everything PageTOC does happens on your device.</p>
+
+    <h2>Why PageTOC needs access to web pages</h2>
+    <p>A table of contents is built from a page’s own heading structure, so PageTOC has to read the page you are looking at. That is the whole of what the permission is used for: reading the page’s structure, on your device, while you are looking at it.</p>
+    <p>PageTOC is granted access per site by Safari, and only when you use it. It does not run on pages where you have not invoked it.</p>
+
+    <h2>What is stored on your device</h2>
+    <ul>
+      <li>Your settings: table of contents depth, and whether the floating button is shown.</li>
+      <li>The sites you chose to hide PageTOC on — added only when you hide one, and removable in the app.</li>
+      <li>Where you dragged the panel or the floating button, remembered per site.</li>
+    </ul>
+    <p>This data is stored by the operating system in the app’s own container and in the extension’s local storage. It is never transmitted anywhere. Deleting PageTOC deletes all of it.</p>
+
+    <h2>What is never stored</h2>
+    <ul>
+      <li>The addresses of pages you visit.</li>
+      <li>How far you have read, or which heading you were on.</li>
+      <li>Any text or other content from the pages themselves.</li>
+      <li>Any identifier for you or your device.</li>
+    </ul>
+    <p>A hidden site is a record you created deliberately, and it is stored as an origin such as <code>https://example.com</code> — never as a page address.</p>
+
+    <h2>Third parties</h2>
+    <p>None. PageTOC contains no third-party SDKs, no advertising, no attribution frameworks and no tracking of any kind. Nothing is shared with anyone, because nothing is collected.</p>
+
+    <h2>Sending us feedback</h2>
+    <p>If you email support, the message contains whatever you chose to write, plus the app version in the subject line. That email reaches a person’s inbox and is not processed by any support system. Nothing is prefilled from your browsing beyond what you type or paste yourself.</p>
+
+    <h2>Children</h2>
+    <p>PageTOC is rated 4+ and collects no data from anyone, including children.</p>
+
+    <h2>How to verify all of this</h2>
+    <p>Run PageTOC behind an HTTP proxy and observe that it produces no traffic at all.</p>
+
+    <h2>Changes</h2>
+    <p>If a future version of PageTOC ever sends anything off your device, this policy and the App Store privacy label will be updated <strong>before</strong> that version is submitted, and the change will be described in the release notes.</p>
+
+    <h2>Contact</h2>
+    <p><a href="mailto:szlab.ai@outlook.com">szlab.ai@outlook.com</a></p>
+  </Prose>
+</BaseLayout>

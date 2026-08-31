@@ -1,0 +1,17 @@
+---
+import { useTranslations } from '../i18n/utils';
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+---
+<section id="how" class="mx-auto max-w-5xl scroll-mt-16 px-5 py-16">
+  <h2 class="mb-10 text-center text-2xl font-semibold">{t('how.heading')}</h2>
+  <ol class="grid gap-6 sm:grid-cols-3">
+    {[1, 2, 3].map((n) => (
+      <li class="rounded-2xl border border-line p-6">
+        <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-accent/10 text-sm font-semibold text-accent">{n}</span>
+        <h3 class="mt-3 font-semibold">{t(`how.${n}.title`)}</h3>
+        <p class="mt-1 text-sm leading-relaxed text-muted">{t(`how.${n}.desc`)}</p>
+      </li>
+    ))}
+  </ol>
+</section>

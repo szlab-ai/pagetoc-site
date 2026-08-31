@@ -1,0 +1,36 @@
+---
+// GitHub Pages 会以 HTTP 404 状态返回这个页面（而不是 200 + 空白），
+// 避免失效链接被判成 soft 404。页面本身 noindex，也不参与 hreflang。
+import '../styles/global.css';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+const base = import.meta.env.BASE_URL;
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex, follow" />
+  <link rel="icon" href={`${base}brand/favicon.ico`} sizes="any" />
+  <link rel="icon" type="image/png" href={`${base}brand/icon-32.png`} sizes="32x32" />
+  <link rel="apple-touch-icon" href={`${base}brand/apple-touch-icon.png`} />
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+  <meta name="theme-color" content="#0d1219" media="(prefers-color-scheme: dark)" />
+  <title>Page not found — PageTOC</title>
+</head>
+<body class="bg-bg font-sans text-ink antialiased">
+  <Header lang="en" />
+  <main class="mx-auto max-w-content px-5 py-24 text-center">
+    <p class="text-sm font-semibold uppercase tracking-wide text-muted">404</p>
+    <h1 class="mt-2 text-3xl font-bold tracking-tight">Page not found</h1>
+    <p class="mt-3 text-muted">这个页面不存在或已经移动。</p>
+    <p class="mt-8 flex flex-wrap justify-center gap-x-5 gap-y-2 text-sm">
+      <a href={`${base}en/`} class="text-accent">PageTOC home</a>
+      <a href={`${base}zh/`} class="text-accent">中文首页</a>
+      <a href={`${base}en/support/`} class="text-accent">Support</a>
+    </p>
+  </main>
+  <Footer lang="en" />
+</body>
+</html>
