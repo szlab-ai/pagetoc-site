@@ -10,13 +10,13 @@ const base = import.meta.env.BASE_URL;
 // Mac 两张是整幅铺开而不是并排两列：面板宽 250 CSS px，在 1280 宽的截图里只占
 // 五分之一，塞进两列后面板不到 110px、字号不足 5px，等于放了一张看不清的图。
 //
-// framed 的那几张自带机身边框，四角是透明的 —— 再套 rounded-2xl + border 会在
-// 透明角外面画出一圈方框，所以它们不加边框类。
+// 每张都自带机身外壳，四角是透明的 —— 再套 rounded-2xl + border 会在透明角外面
+// 画出一圈方框，所以一律不加边框类，圆角和阴影都在 PNG 里。
 const mac = [
-  { file: 'panel-light', w: 2560, h: 1600, alt: 'shots.alt.panel', caption: 'shots.panel' },
-  { file: 'panel-dark', w: 2560, h: 1600, alt: 'shots.alt.panelDark', caption: 'shots.panelDark' },
+  { file: 'panel-light', w: 2834, h: 1688, alt: 'shots.alt.panel', caption: 'shots.panel' },
+  { file: 'panel-dark', w: 2834, h: 1688, alt: 'shots.alt.panelDark', caption: 'shots.panelDark' },
 ] as const;
-const pad = { file: 'ipad-panel-light', w: 2800, h: 2116, alt: 'shots.alt.ipad', caption: 'shots.ipad' } as const;
+const pad = { file: 'ipad-panel-light', w: 2796, h: 2112, alt: 'shots.alt.ipad', caption: 'shots.ipad' } as const;
 const phone = [
   { file: 'ball-light', alt: 'shots.alt.ball', caption: 'shots.ball' },
   { file: 'sheet-light', alt: 'shots.alt.sheet', caption: 'shots.sheet' },
@@ -36,7 +36,7 @@ const phone = [
           height={s.h}
           loading={i === 0 ? 'eager' : 'lazy'}
           decoding="async"
-          class="w-full rounded-2xl border border-line"
+          class="w-full"
         />
         <figcaption class="mt-3 text-sm text-muted">{t(s.caption)}</figcaption>
       </figure>

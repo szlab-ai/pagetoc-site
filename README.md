@@ -23,8 +23,8 @@ npm run build    # 输出到 dist/
 
 ## 截图是怎么来的
 
-`public/screenshots/` 里的五张图不是重绘的示意图，而是**扩展自己的渲染代码**在
-WebKit 里 @2x 实拍的产物。生成方式：
+`public/screenshots/` 里的六张图不是重绘的示意图，屏幕里的一切都是**扩展自己的
+渲染代码** @2x 实拍的产物。生成方式：
 
 ```bash
 node scripts/capture.mjs
@@ -37,6 +37,15 @@ node scripts/capture.mjs
 - 改了扩展的 UI，重跑一次脚本，站点截图就跟着更新；
 - 演示文章是自己写的，**没有**使用仓库里保存的第三方站点快照 —— 那会把别人的
   内容和品牌发布到一个公开页面上。
+
+**哪些是画的**：机身外壳、状态栏（9:41 与信号/Wi-Fi/电量图标）、灵动岛、Home
+指示条、MacBook 底座 —— 这些是 mockup 元素，设备上没拍过。状态栏以下的一切都是真的。
+
+**为什么用 Chromium 而不是 WebKit**：产品跑在 Safari 里，本来该用 WebKit，
+一开始也是。但 Playwright 的 headless WebKit 对 `backdrop-filter` 谎报支持
+（`CSS.supports` 返回 true，然后不做栅格化），而面板和抽屉是 94% 不透明、
+全靠这层模糊的表面 —— WebKit 下正文会直接从目录里透出来。那是拍摄工具的问题，
+不是设备上的样子。没有为截图改动任何产品 CSS。细节见 `scripts/capture.mjs` 顶部。
 
 前置条件：`../SimpleTOC` 存在、已 `npm install`、已构建过扩展包。
 
