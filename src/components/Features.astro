@@ -1,18 +1,18 @@
 ---
 import { useTranslations } from '../i18n/utils';
+import FeatureIcon from './FeatureIcon.astro';
 const { lang } = Astro.props;
 const t = useTranslations(lang);
 const feats = ['outline', 'here', 'jump', 'ball', 'dark', 'block'] as const;
-const icons: Record<string, string> = {
-  outline: '☰', here: '◉', jump: '↧', ball: '⤢', dark: '◐', block: '⊘',
-};
 ---
 <section id="features" class="mx-auto max-w-5xl scroll-mt-16 px-5 py-16">
   <h2 class="mb-10 text-center text-2xl font-semibold">{t('features.heading')}</h2>
   <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
     {feats.map((k) => (
       <div class="rounded-2xl border border-line bg-card p-6">
-        <div aria-hidden="true" class="mb-3 text-2xl leading-none text-accent">{icons[k]}</div>
+        <div class="mb-4 flex h-10 w-10 items-center justify-center rounded-xl bg-accent/10 text-accent">
+          <FeatureIcon name={k} class="h-5 w-5" />
+        </div>
         <h3 class="font-semibold">{t(`feat.${k}.title`)}</h3>
         <p class="mt-1 text-sm leading-relaxed text-muted">{t(`feat.${k}.desc`)}</p>
       </div>

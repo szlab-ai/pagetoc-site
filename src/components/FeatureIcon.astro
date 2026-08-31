@@ -1,0 +1,79 @@
+---
+/**
+ * 功能卡片的图标。
+ *
+ * 原来这里用的是 Unicode 字形（☰ ◉ ↧ ⤢ ◐ ⊘）。字形的问题不在于形状不对，而在于
+ * 它们来自不同的 Unicode 区段、由系统字体各自渲染：笔画粗细、光学尺寸、基线全都
+ * 对不齐，☰ 是实心粗条而 ↧ 是细线，放在同一排卡片里怎么看怎么散。改成手写 SVG
+ * 之后，六个图标共用同一套网格（24×24）、同一个描边宽度和同样的圆头端点。
+ *
+ * 其中三个刻意画成产品自己的样子，而不是通用图标：outline 是层级导轨，here 是
+ * 那根高亮蓝条（就是 --pagetoc-accent 画在 li.active 上的那一根），ball 是吸到
+ * 边缘的悬浮球加一条拖动轨迹。截图里看到的和图标里画的是同一件东西。
+ */
+interface Props {
+  name: 'outline' | 'here' | 'jump' | 'ball' | 'dark' | 'block';
+  class?: string;
+}
+const { name, class: klass } = Astro.props;
+---
+<svg
+  class={klass}
+  viewBox="0 0 24 24"
+  fill="none"
+  stroke="currentColor"
+  stroke-width="1.6"
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+>
+  {name === 'outline' && (
+    <>
+      <path d="M5 5.5h14" />
+      <path d="M7.25 8.75v7" opacity=".4" />
+      <path d="M9.75 10h9.25" />
+      <path d="M9.75 14.5h6.5" />
+      <path d="M5 19h14" />
+    </>
+  )}
+
+  {name === 'here' && (
+    <>
+      <path d="M9.75 6h9.25" opacity=".35" />
+      <path d="M6 9.6v4.8" stroke-width="2.4" />
+      <path d="M9.75 12h9.25" />
+      <path d="M9.75 18h9.25" opacity=".35" />
+    </>
+  )}
+
+  {name === 'jump' && (
+    <>
+      <path d="M12 4.75v9.5" />
+      <path d="M8.4 10.65 12 14.25l3.6-3.6" />
+      <path d="M6 18.75h12" opacity=".4" />
+    </>
+  )}
+
+  {name === 'ball' && (
+    <>
+      <rect x="3.6" y="3.6" width="16.8" height="16.8" rx="3.6" opacity=".3" />
+      <path d="M7.6 16 13.2 12.8" opacity=".45" stroke-dasharray="2 2.6" />
+      <circle cx="16.7" cy="11.4" r="2.8" fill="currentColor" stroke="none" />
+    </>
+  )}
+
+  {name === 'dark' && (
+    <>
+      <circle cx="12" cy="12" r="7.5" />
+      <path d="M12 4.5a7.5 7.5 0 0 1 0 15z" fill="currentColor" stroke="none" />
+    </>
+  )}
+
+  {name === 'block' && (
+    <>
+      <path d="M3.8 12S7 6.9 12 6.9s8.2 5.1 8.2 5.1-3.2 5.1-8.2 5.1S3.8 12 3.8 12Z" opacity=".32" />
+      <circle cx="12" cy="12" r="2.3" opacity=".32" />
+      <path d="M6.2 17.8 17.8 6.2" />
+    </>
+  )}
+</svg>
