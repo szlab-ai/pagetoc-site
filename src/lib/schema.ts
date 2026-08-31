@@ -18,7 +18,7 @@ export const APP = {
   email: 'szlab.ai@outlook.com',
 } as const;
 
-const SHOTS = ['panel-light', 'panel-dark', 'sheet-light', 'sheet-dark', 'ball-light'];
+const SHOTS = ['panel-light', 'panel-dark', 'ipad-panel-light', 'sheet-light', 'sheet-dark', 'ball-light'];
 
 const copy = {
   en: {
