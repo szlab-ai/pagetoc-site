@@ -7,69 +7,81 @@ const base = import.meta.env.BASE_URL;
 // 全部是产品真机截图：由 scripts/capture.mjs 用扩展自己的渲染代码 @2x 拍出来的，
 // 不是重绘的示意图。演示文章也是自己写的，不是别人网站的快照。
 //
-// Mac 两张是整幅铺开而不是并排两列：面板宽 250 CSS px，在 1280 宽的截图里只占
-// 五分之一，塞进两列后面板不到 110px、字号不足 5px，等于放了一张看不清的图。
+// 按设备分组，每组一个器材名小标题 —— 六张图混在一起时，读者要先辨认这是哪台
+// 设备才能看内容，分组之后这一步不用做了。组与组之间用一条细线断开，而不是靠
+// 留白，因为图片本身的四角是透明的，纯留白分不出「组内间距」和「组间间距」。
+//
+// 三组的宽度刻意不同，这是内容决定的，不是排版趣味：
+//   Mac  —— 整幅铺开。面板宽 250 CSS px，在 1280 宽的截图里只占五分之一；塞进
+//           两列后面板不到 110px、字号不足 5px，等于放了一张看不清的图。
+//   iPad —— 收到 max-w-5xl。它比 Mac 更方，整幅铺开会比 Mac 那张还高、抢掉版面
+//           重心；收窄一档之后缩放比仍有 0.7，面板文字照样看得清。
+//   iPhone —— 三列并排。单张约 360px 宽，缩放比 0.79，是三组里最清楚的。
+//
+// 手机上这一组改成横向滑动条：三张竖构图的手机截图各占一屏，纵向铺开要滑四屏
+// 才能看完，而它们本来就是「同一个东西的三个状态」，横着比对才对。卡片宽 74%
+// 让下一张露出一角，这是这个手势唯一的提示；sm 以上换回三列网格。
 //
 // 每张都自带机身外壳，四角是透明的 —— 再套 rounded-2xl + border 会在透明角外面
 // 画出一圈方框，所以一律不加边框类，圆角和阴影都在 PNG 里。
-const mac = [
-  { file: 'panel-light', w: 3306, h: 1897, alt: 'shots.alt.panel', caption: 'shots.panel' },
-  { file: 'panel-dark', w: 3306, h: 1897, alt: 'shots.alt.panelDark', caption: 'shots.panelDark' },
+const groups = [
+  {
+    device: 'Mac',
+    wrap: 'grid gap-6',
+    figure: '',
+    shots: [
+      { file: 'panel-light', w: 3306, h: 1897, alt: 'shots.alt.panel', caption: 'shots.panel' },
+      { file: 'panel-dark', w: 3306, h: 1897, alt: 'shots.alt.panelDark', caption: 'shots.panelDark' },
+    ],
+  },
+  {
+    device: 'iPad',
+    wrap: 'mx-auto grid max-w-5xl gap-6',
+    figure: '',
+    shots: [
+      { file: 'ipad-panel-light', w: 2930, h: 2245, alt: 'shots.alt.ipad', caption: 'shots.ipad' },
+    ],
+  },
+  {
+    device: 'iPhone',
+    wrap:
+      '-mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-2 ' +
+      'sm:mx-0 sm:grid sm:grid-cols-3 sm:gap-6 sm:overflow-visible sm:px-0',
+    figure: 'w-[74%] shrink-0 snap-center sm:w-auto',
+    shots: [
+      { file: 'ball-light', w: 1359, h: 2736, alt: 'shots.alt.ball', caption: 'shots.ball' },
+      { file: 'sheet-light', w: 1359, h: 2736, alt: 'shots.alt.sheet', caption: 'shots.sheet' },
+      { file: 'sheet-dark', w: 1359, h: 2736, alt: 'shots.alt.sheetDark', caption: 'shots.sheetDark' },
+    ],
+  },
 ] as const;
-const pad = { file: 'ipad-panel-light', w: 2930, h: 2245, alt: 'shots.alt.ipad', caption: 'shots.ipad' } as const;
-const phone = [
-  { file: 'ball-light', alt: 'shots.alt.ball', caption: 'shots.ball' },
-  { file: 'sheet-light', alt: 'shots.alt.sheet', caption: 'shots.sheet' },
-  { file: 'sheet-dark', alt: 'shots.alt.sheetDark', caption: null },
-] as const;
+
+// 只有第一张预加载。其余五张加起来 3MB 出头，全部 eager 会把首屏拖慢，而它们
+// 都在折叠之下。
+let index = 0;
 ---
 <section id="screens" class="mx-auto max-w-6xl scroll-mt-16 px-5 py-16">
-  <h2 class="mb-10 text-center text-2xl font-semibold">{t('shots.heading')}</h2>
+  <h2 class="mb-12 text-center text-2xl font-semibold">{t('shots.heading')}</h2>
 
-  <div class="space-y-8">
-    {mac.map((s, i) => (
-      <figure>
-        <img
-          src={`${base}screenshots/${s.file}.png`}
-          alt={t(s.alt)}
-          width={s.w}
-          height={s.h}
-          loading={i === 0 ? 'eager' : 'lazy'}
-          decoding="async"
-          class="w-full"
-        />
-        <figcaption class="mt-3 text-sm text-muted">{t(s.caption)}</figcaption>
-      </figure>
-    ))}
-
-    <figure>
-      <img
-        src={`${base}screenshots/${pad.file}.png`}
-        alt={t(pad.alt)}
-        width={pad.w}
-        height={pad.h}
-        loading="lazy"
-        decoding="async"
-        class="w-full"
-      />
-      <figcaption class="mt-3 text-sm text-muted">{t(pad.caption)}</figcaption>
-    </figure>
-  </div>
-
-  <div class="mt-8 grid gap-6 sm:grid-cols-3">
-    {phone.map((s) => (
-      <figure>
-        <img
-          src={`${base}screenshots/${s.file}.png`}
-          alt={t(s.alt)}
-          width="1359"
-          height="2736"
-          loading="lazy"
-          decoding="async"
-          class="w-full"
-        />
-        {s.caption && <figcaption class="mt-3 text-sm text-muted">{t(s.caption)}</figcaption>}
-      </figure>
-    ))}
-  </div>
+  {groups.map((g, gi) => (
+    <div class={gi > 0 ? 'mt-14 border-t border-line pt-10' : ''}>
+      <h3 class="mb-6 text-sm font-semibold text-accent">{g.device}</h3>
+      <div class={g.wrap}>
+        {g.shots.map((s) => (
+          <figure class={g.figure}>
+            <img
+              src={`${base}screenshots/${s.file}.png`}
+              alt={t(s.alt)}
+              width={s.w}
+              height={s.h}
+              loading={index++ === 0 ? 'eager' : 'lazy'}
+              decoding="async"
+              class="w-full"
+            />
+            <figcaption class="mt-3 text-sm leading-relaxed text-muted">{t(s.caption)}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  ))}
 </section>

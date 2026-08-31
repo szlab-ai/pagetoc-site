@@ -31,6 +31,7 @@ export const ui = {
     'shots.alt.ipad': 'A long article on iPad with the PageTOC panel docked in the right margin, the current section highlighted',
     'shots.alt.ball': 'An article on iPhone with the PageTOC floating button resting against the right edge',
     'shots.alt.sheet': 'The PageTOC sheet open over an article on iPhone, showing a nested outline with a progress bar',
+    'shots.sheetDark': 'The same sheet in dark mode.',
     'shots.alt.sheetDark': 'The same sheet in dark mode',
 
     'features.heading': 'What it does',
@@ -97,6 +98,7 @@ export const ui = {
     'shots.alt.ipad': 'iPad 上的长文，PageTOC 面板停在右侧页边，当前章节高亮',
     'shots.alt.ball': 'iPhone 上的一篇文章，PageTOC 悬浮球吸附在右边缘',
     'shots.alt.sheet': 'iPhone 上打开的 PageTOC 抽屉，显示带层级的目录和进度条',
+    'shots.sheetDark': '同一个抽屉的深色模式。',
     'shots.alt.sheetDark': '同一个抽屉的深色模式',
 
     'features.heading': '它能做什么',
