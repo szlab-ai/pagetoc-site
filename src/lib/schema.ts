@@ -136,8 +136,8 @@ export function buildSchema(input: SchemaInput) {
       primaryImageOfPage: {
         '@type': 'ImageObject',
         url: abs('screenshots/panel-light.png'),
-        width: 2834,
-        height: 1688,
+        width: 3306,
+        height: 1897,
       },
     });
   } else {

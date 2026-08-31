@@ -38,8 +38,14 @@ node scripts/capture.mjs
 - 演示文章是自己写的，**没有**使用仓库里保存的第三方站点快照 —— 那会把别人的
   内容和品牌发布到一个公开页面上。
 
-**哪些是画的**：机身外壳、状态栏（9:41 与信号/Wi-Fi/电量图标）、灵动岛、Home
-指示条、MacBook 底座 —— 这些是 mockup 元素，设备上没拍过。状态栏以下的一切都是真的。
+**机身外壳是真素材，不是画的**：`scripts/frames/` 里三张 PNG 来自 Meta Design
+Devices（`fastlane frameit` 用的同一套），机身、按键、灵动岛、MacBook 底座都来自
+那三张图。开孔是透明的，帧图叠在截图之上；`DEVICES[*].screenRadius` 按帧图 alpha
+通道量出来，用来把截图的直角切成开孔的圆角，否则四角会戳出白色直角。
+每台设备的 viewport 都按帧图开孔尺寸 1:1 选定，不做任何缩放。
+
+**仍然是画的**：状态栏（9:41 与信号/Wi-Fi/电量图标）与 Home 指示条 —— 这两样是
+软件，硬件贴图给不了。状态栏以下、指示条以外的一切都是真的。
 
 **为什么用 Chromium 而不是 WebKit**：产品跑在 Safari 里，本来该用 WebKit，
 一开始也是。但 Playwright 的 headless WebKit 对 `backdrop-filter` 谎报支持

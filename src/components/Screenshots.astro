@@ -13,10 +13,10 @@ const base = import.meta.env.BASE_URL;
 // 每张都自带机身外壳，四角是透明的 —— 再套 rounded-2xl + border 会在透明角外面
 // 画出一圈方框，所以一律不加边框类，圆角和阴影都在 PNG 里。
 const mac = [
-  { file: 'panel-light', w: 2834, h: 1688, alt: 'shots.alt.panel', caption: 'shots.panel' },
-  { file: 'panel-dark', w: 2834, h: 1688, alt: 'shots.alt.panelDark', caption: 'shots.panelDark' },
+  { file: 'panel-light', w: 3306, h: 1897, alt: 'shots.alt.panel', caption: 'shots.panel' },
+  { file: 'panel-dark', w: 3306, h: 1897, alt: 'shots.alt.panelDark', caption: 'shots.panelDark' },
 ] as const;
-const pad = { file: 'ipad-panel-light', w: 2796, h: 2112, alt: 'shots.alt.ipad', caption: 'shots.ipad' } as const;
+const pad = { file: 'ipad-panel-light', w: 2930, h: 2245, alt: 'shots.alt.ipad', caption: 'shots.ipad' } as const;
 const phone = [
   { file: 'ball-light', alt: 'shots.alt.ball', caption: 'shots.ball' },
   { file: 'sheet-light', alt: 'shots.alt.sheet', caption: 'shots.sheet' },
@@ -62,8 +62,8 @@ const phone = [
         <img
           src={`${base}screenshots/${s.file}.png`}
           alt={t(s.alt)}
-          width="828"
-          height="1736"
+          width="1359"
+          height="2736"
           loading="lazy"
           decoding="async"
           class="w-full"

@@ -119,45 +119,64 @@ async function mountBall(page, scrollTo, position, open) {
 }
 
 /**
- * Wrap a finished shot in a device.
+ * Composite a finished shot into a real device frame.
  *
- * The bezel, the Dynamic Island, the status bar and the home indicator are
- * drawn here — they are mockup furniture, not capture. The status bar reads
- * 9:41 because that is the time in every Apple mockup ever shipped, and the
- * signal/Wi-Fi/battery glyphs are hand-drawn SVG. None of it comes from a
- * device. What IS real is everything below the status bar: the article, the
- * panel, the sheet, the ball, all rendered by the shipped bundle.
+ * The frames in scripts/frames/ are photographic-quality machine renders from
+ * Facebook (Meta) Design — the same set `fastlane frameit` downloads — not
+ * shapes drawn here. See scripts/frames/README.md for provenance and the
+ * licence note. Buttons, bezel curvature and the Dynamic Island all come from
+ * the frame, which is composited ON TOP of the capture.
  *
- * The status strip is painted in the page's own background colour rather than
- * left transparent, because that is what the platform does — page content
- * scrolls under the status bar and the bar is composited over it.
+ * `screenRadius` is not decoration. The frame's screen aperture is a hole in
+ * an otherwise opaque PNG, and a browser capture has square corners, so
+ * without it the four corners of the shot poke out past the bezel curve as
+ * white right angles. The values are measured off each frame's own alpha
+ * channel (first fully-transparent pixel per row, fitted to a circle): 170px
+ * for the iPhone, 38px for the iPad, 0 for the MacBook, whose aperture really
+ * is square. The container behind is black so a sub-pixel disagreement between
+ * my radius and the frame's reads as bezel rather than as a bright seam.
  *
- * The source PNG is already @2x, so everything here is written in points and
- * doubled through S(): bezel 12 = 24 device pixels.
+ * Each device's viewport is chosen so the capture lands on the frame's screen
+ * area 1:1 with no resampling — iPhone 16 is 393x852@3x = 1179x2556, iPad Pro
+ * 12.9" is 1366x1024@2x = 2732x2048, MacBook Air is 1280x800@2x = 2560x1600.
+ * Change a viewport and the shot gets rescaled into the frame; change both
+ * together or not at all.
+ *
+ * Still drawn here, over the capture and under the frame: the status bar
+ * (9:41, and hand-drawn signal/Wi-Fi/battery glyphs) and the home indicator.
+ * Those are software, so no hardware frame can supply them. The status strip
+ * is painted in the page's own background colour because that is what the
+ * platform does — content scrolls under the status bar and the bar is
+ * composited over it.
  */
 const DEVICES = {
-  // iPhone 15/16-class: 12pt bezel, 54pt outer corner, Dynamic Island.
-  phone: { bezel: 12, radius: 54, island: [126, 37], statusBar: 54, homeBar: 140, statusFont: 15 },
-  // iPad Pro: even bezels, no island, a home indicator on the long edge.
-  pad: { bezel: 16, radius: 30, statusBar: 34, homeBar: 320, statusFont: 13, camera: true },
-  // MacBook Air-shaped: thin even bezel, and a foot below the lid so the
-  // silhouette reads as a laptop rather than a monitor.
-  //
-  // Deliberately no notch. On a real MacBook the notch sits in the menu bar,
-  // above the window — drawing one here puts a black bar through the middle of
-  // a sentence, and the only way to make it look right is to also draw a menu
-  // bar, which means inventing macOS chrome this capture never contained.
-  // An unnotched MacBook is a real machine; a notch over body text is not.
-  mac: { bezel: 10, radius: 16, foot: 24 },
+  phone: {
+    file: 'Apple iPhone 16 Black.png',
+    screen: { x: 90, y: 90, w: 1179, h: 2556 },
+    screenRadius: 170,
+    viewport: { width: 393, height: 852, scale: 3 },
+    statusBar: 54, statusFont: 15, homeBar: 140,
+  },
+  pad: {
+    file: 'Apple iPad Pro (12.9-inch) (4th generation) Space Gray Landscape.png',
+    screen: { x: 96, y: 96, w: 2732, h: 2048 },
+    screenRadius: 38,
+    viewport: { width: 1366, height: 1024, scale: 2 },
+    statusBar: 34, statusFont: 13, homeBar: 320,
+  },
+  mac: {
+    file: 'Apple MacBook Air Space Gray.png',
+    screen: { x: 373, y: 123, w: 2560, h: 1600 },
+    screenRadius: 0,
+    viewport: { width: 1280, height: 800, scale: 2 },
+  },
 }
 
 const PAGE_BG = { light: '#ffffff', dark: '#141416' }
 const PAGE_FG = { light: '#000000', dark: '#f2f2f7' }
 
 function statusGlyphs(fg, scale) {
-  const w = 78 * scale
-  const h = 14 * scale
-  return `<svg width="${w}" height="${h}" viewBox="0 0 78 14" fill="${fg}" aria-hidden="true">
+  return `<svg width="${78 * scale}" height="${14 * scale}" viewBox="0 0 78 14" fill="${fg}" aria-hidden="true">
     <rect x="0" y="9" width="3" height="5" rx="1"/>
     <rect x="5" y="6.5" width="3" height="7.5" rx="1"/>
     <rect x="10" y="4" width="3" height="10" rx="1"/>
@@ -171,38 +190,29 @@ function statusGlyphs(fg, scale) {
 
 async function frame(browser, buffer, { kind, scheme }) {
   const d = DEVICES[kind]
-  const { width: w, height: h } = pngSize(buffer)
-  const scale = 2
+  const scale = d.viewport.scale
   const S = (pt) => pt * scale
   const bg = PAGE_BG[scheme]
   const fg = PAGE_FG[scheme]
+  const framePng = readFileSync(resolve(here, 'frames', d.file))
+  const { width: fw, height: fh } = pngSize(framePng)
+  const shot = pngSize(buffer)
+  if (shot.width !== d.screen.w || shot.height !== d.screen.h) {
+    throw new Error(
+      `${kind}: capture is ${shot.width}x${shot.height} but the frame's screen is ` +
+        `${d.screen.w}x${d.screen.h}. Fix DEVICES.${kind}.viewport rather than letting it rescale.`,
+    )
+  }
 
-  const lidW = w + S(d.bezel) * 2
-  const lidH = h + S(d.bezel) * 2
-  const footW = d.foot ? Math.round(lidW * 1.09) : 0
-  const footH = d.foot ? S(d.foot) : 0
-  const pageW = Math.max(lidW, footW)
-  const pageH = lidH + footH
-
+  // 状态栏里的时间要让开灵动岛：岛由机身贴图画在最上层，时间在它左边，图标在右边。
   const statusBar = d.statusBar
     ? `<div style="position:absolute;left:0;right:0;top:0;height:${S(d.statusBar)}px;background:${bg};
                    display:flex;align-items:center;justify-content:space-between;
-                   padding:0 ${S(kind === 'phone' ? 28 : 26)}px;box-sizing:border-box">
+                   padding:0 ${S(kind === 'phone' ? 30 : 26)}px;box-sizing:border-box">
          <span style="font:600 ${S(d.statusFont)}px/1 -apple-system,BlinkMacSystemFont,'Helvetica Neue',sans-serif;
                       color:${fg};letter-spacing:.2px">9:41</span>
          ${statusGlyphs(fg, scale)}
        </div>`
-    : ''
-
-  const island = d.island
-    ? `<div style="position:absolute;left:50%;transform:translateX(-50%);top:${S(11)}px;
-                   width:${S(d.island[0])}px;height:${S(d.island[1])}px;border-radius:${S(d.island[1] / 2)}px;
-                   background:#000"></div>`
-    : ''
-
-  const camera = d.camera
-    ? `<div style="position:absolute;left:50%;transform:translateX(-50%);top:${S(-d.bezel / 2)}px;
-                   width:${S(5)}px;height:${S(5)}px;border-radius:50%;background:#3a3a3e"></div>`
     : ''
 
   const homeBar = d.homeBar
@@ -211,41 +221,22 @@ async function frame(browser, buffer, { kind, scheme }) {
                    background:${scheme === 'dark' ? 'rgba(255,255,255,.62)' : 'rgba(0,0,0,.55)'}"></div>`
     : ''
 
-  const notch = d.notch
-    ? `<div style="position:absolute;left:50%;transform:translateX(-50%);top:0;
-                   width:${S(d.notch[0])}px;height:${S(d.notch[1])}px;
-                   border-radius:0 0 ${S(9)}px ${S(9)}px;background:#1b1b1e"></div>`
-    : ''
-
-  // 底座：上窄下宽的梯形 + 中间那道取手凹槽，MacBook 合起来看就是这个轮廓。
-  const foot = d.foot
-    ? `<div style="width:${footW}px;height:${footH}px;position:relative;
-                   background:linear-gradient(#d3d8de 0%,#b3bac2 45%,#868d96 100%);
-                   clip-path:polygon(${S(10)}px 0, ${footW - S(10)}px 0, ${footW}px 100%, 0 100%);
-                   border-radius:0 0 ${S(6)}px ${S(6)}px">
-         <div style="position:absolute;left:50%;transform:translateX(-50%);top:0;
-                     width:${S(96)}px;height:${S(7)}px;border-radius:0 0 ${S(7)}px ${S(7)}px;
-                     background:#7f868f"></div>
-       </div>`
-    : ''
-
   const page = await (await browser.newContext({
-    viewport: { width: pageW, height: pageH },
+    viewport: { width: fw, height: fh },
     deviceScaleFactor: 1,
   })).newPage()
-  await page.setContent(`<!doctype html><body style="margin:0;display:flex;flex-direction:column;align-items:center">
-    <div style="width:${lidW}px;height:${lidH}px;box-sizing:border-box;padding:${S(d.bezel)}px;
-                border-radius:${S(d.radius)}px;background:#1b1b1e;position:relative;
-                box-shadow:0 ${S(10)}px ${S(30)}px rgba(0,0,0,.28), 0 0 0 1px rgba(255,255,255,.12)">
-      <div style="position:relative;width:${w}px;height:${h}px;border-radius:${S(d.radius - d.bezel)}px;
-                  overflow:hidden;box-shadow:0 0 0 2px rgba(255,255,255,.14)">
-        <img src="data:image/png;base64,${buffer.toString('base64')}" width="${w}" height="${h}" style="display:block">
-        ${statusBar}${island}${homeBar}${notch}
+  await page.setContent(`<!doctype html><body style="margin:0">
+    <div style="position:relative;width:${fw}px;height:${fh}px">
+      <div style="position:absolute;left:${d.screen.x}px;top:${d.screen.y}px;
+                  width:${d.screen.w}px;height:${d.screen.h}px;overflow:hidden;
+                  border-radius:${d.screenRadius}px;background:#000">
+        <img src="data:image/png;base64,${buffer.toString('base64')}"
+             width="${d.screen.w}" height="${d.screen.h}" style="display:block">
+        ${statusBar}${homeBar}
       </div>
-      ${camera}
-    </div>
-    ${foot}
-  </body>`)
+      <img src="data:image/png;base64,${framePng.toString('base64')}"
+           width="${fw}" height="${fh}" style="position:absolute;left:0;top:0;display:block">
+    </div></body>`)
   await page.waitForFunction(() => [...document.images].every((i) => i.complete && i.naturalWidth > 0))
   const out = await page.screenshot({ omitBackground: true })
   await page.context().close()
@@ -257,11 +248,12 @@ function pngSize(buffer) {
   return { width: buffer.readUInt32BE(16), height: buffer.readUInt32BE(20) }
 }
 
-async function shoot({ browser, name, device, width, height, scheme, scrollTo, ball, sheet }) {
+async function shoot({ browser, name, device, scheme, scrollTo, ball, sheet }) {
+  const { width, height, scale } = DEVICES[device].viewport
   const ctx = await browser.newContext({
     viewport: { width, height },
     colorScheme: scheme,
-    deviceScaleFactor: 2,
+    deviceScaleFactor: scale,
   })
   const page = await ctx.newPage()
   await page.goto(ARTICLE)
@@ -273,31 +265,29 @@ async function shoot({ browser, name, device, width, height, scheme, scrollTo, b
   const { writeFileSync } = await import('node:fs')
   writeFileSync(`${OUT}/${name}.png`, buffer)
   const size = pngSize(buffer)
-  console.log(`  ${name}.png  ${size.width}x${size.height}  (${device} ${width}x${height} @2x ${scheme})`)
+  console.log(`  ${name}.png  ${size.width}x${size.height}  (${device} ${width}x${height} @${scale}x ${scheme})`)
 }
 
-const PHONE = { device: 'phone', width: 390, height: 844 }
-const PAD = { device: 'pad', width: 1366, height: 1024 }
-const MAC = { device: 'mac', width: 1280, height: 800 }
-
-// Where createBall puts the ball on an iPhone with a home indicator:
-// x = 390 - 8 - 48, y = 844 - 34 - 8 - 48. See mountBall for why it is spelled out.
-const BALL_DEFAULT = { x: 334, y: 754, edge: 'right' }
+// Where createBall puts the ball on an iPhone 16 with a home indicator:
+// x = 393 - 8 - 48, y = 852 - 34 - 8 - 48. See mountBall for why it is spelled out.
+const BALL_DEFAULT = { x: 337, y: 762, edge: 'right' }
 // A dragged position, for the shots where the sheet is open. Left at the
 // default the ball ends up behind the sheet's bottom-right corner and only a
 // sliver of its progress ring shows past the rounded edge — accurate, and it
 // reads as a rendering seam. Dragging it is an equally real state: the ball is
 // draggable and its position is remembered per site.
-const BALL_DRAGGED = { x: 334, y: 150, edge: 'right' }
+const BALL_DRAGGED = { x: 337, y: 150, edge: 'right' }
 
 const browser = await chromium.launch()
 console.log('Mac')
-await shoot({ browser, ...MAC, name: 'panel-light', scheme: 'light', scrollTo: 1100 })
-await shoot({ browser, ...MAC, name: 'panel-dark', scheme: 'dark', scrollTo: 1100 })
+await shoot({ browser, device: 'mac', name: 'panel-light', scheme: 'light', scrollTo: 1100 })
+await shoot({ browser, device: 'mac', name: 'panel-dark', scheme: 'dark', scrollTo: 1100 })
 console.log('iPad')
-await shoot({ browser, ...PAD, name: 'ipad-panel-light', scheme: 'light', scrollTo: 1100 })
+// 1070 与 1020 不是随手挑的：home indicator 画在屏幕最下面 7pt 处，落在正文上就成了
+// 一道穿字的黑杠。这两个偏移量是量出来的——把 indicator 那条带子对齐到段间空白。
+await shoot({ browser, device: 'pad', name: 'ipad-panel-light', scheme: 'light', scrollTo: 1070 })
 console.log('iPhone')
-await shoot({ browser, ...PHONE, name: 'ball-light', scheme: 'light', scrollTo: 980, ball: BALL_DEFAULT })
-await shoot({ browser, ...PHONE, name: 'sheet-light', scheme: 'light', scrollTo: 980, ball: BALL_DRAGGED, sheet: true })
-await shoot({ browser, ...PHONE, name: 'sheet-dark', scheme: 'dark', scrollTo: 980, ball: BALL_DRAGGED, sheet: true })
+await shoot({ browser, device: 'phone', name: 'ball-light', scheme: 'light', scrollTo: 1020, ball: BALL_DEFAULT })
+await shoot({ browser, device: 'phone', name: 'sheet-light', scheme: 'light', scrollTo: 1020, ball: BALL_DRAGGED, sheet: true })
+await shoot({ browser, device: 'phone', name: 'sheet-dark', scheme: 'dark', scrollTo: 1020, ball: BALL_DRAGGED, sheet: true })
 await browser.close()
