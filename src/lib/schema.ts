@@ -3,15 +3,18 @@ import type { Lang } from '../i18n/ui';
 /**
  * 结构化数据里的产品事实。每一条都能在 SimpleTOC 仓库里对上：
  * 部署目标来自 PageTOC.xcodeproj（IPHONEOS 17.0 / MACOSX 14.0），
- * 名称、类别、分级、免费与否来自 design_handoff_pagetoc_v1/docs/store-listing.md。
+ * 名称、类别、分级来自 design_handoff_pagetoc_v1/docs/store-listing.md。
  *
  * 刻意没有 `offers` / `downloadUrl` / `aggregateRating`：PageTOC 还没有上架，
  * 填一个不存在的 App Store 链接或评分是编造的结构化数据，会被判违规 ——
- * 上架当天再补 storeId、offers 和 datePublished。
+ * 上架当天再补 storeId 和 datePublished。
+ *
+ * 也刻意没有 `isAccessibleForFree`。价格口径不写在站点上，以 store-listing.md
+ * 为准；这里不表态，好过表错态（这个字段一填错，搜索结果里就直接显示出来了）。
  */
 export const APP = {
   name: 'PageTOC',
-  version: '1.0',
+  version: '1.0.0',
   operatingSystem: 'iOS 17.0 or later, iPadOS 17.0 or later, macOS 14.0 or later',
   contentRating: '4+',
   publisherName: 'SZLab',
@@ -118,7 +121,6 @@ export function buildSchema(input: SchemaInput) {
       image: abs('brand/pagetoc.png'),
       screenshot: SHOTS.map((s) => abs(`screenshots/${s}.png`)),
       featureList: c.features,
-      isAccessibleForFree: true,
       publisher: { '@id': orgId },
     },
   ];
