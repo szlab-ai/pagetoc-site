@@ -1,0 +1,20 @@
+---
+/**
+ * /demo/ 用的极简页头，替代站点那个 sticky 的 Header。
+ *
+ * 两点差别都是有意的：
+ * - 不吸顶。演示页存在的意义是「看起来像任意一个长网页」，往下滚之后画面里
+ *   不该再有 PageTOC 的品牌 —— 商店截图里的滚动状态尤其如此。
+ * - 只有一条返回链接。访客要有路回主站，但不该有第二个导航层来跟页面自己的
+ *   标题层级抢注意力（那正是 PageTOC 要读的东西）。
+ */
+import { useTranslations } from '../i18n/utils';
+const { lang } = Astro.props;
+const t = useTranslations(lang);
+const base = import.meta.env.BASE_URL;
+---
+<div class="border-b border-line">
+  <div class="mx-auto max-w-content px-5 py-3">
+    <a href={`${base}${lang}/`} class="text-sm text-muted hover:text-ink">{t('demo.back')}</a>
+  </div>
+</div>

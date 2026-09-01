@@ -15,6 +15,13 @@ export const ui = {
     'nav.privacy': 'Privacy',
     'nav.support': 'Support',
 
+    // /demo/ 用。这一页是给人「打开就能试」的样例长文，也是 App Store 截图的拍摄现场
+    // （见 SimpleTOC 的 docs/superpowers/specs/2026-09-01-store-screenshots-design.md）。
+    'demo.back': '← PageTOC',
+    'demo.metaTitle': 'Sample page — PageTOC for Safari',
+    'demo.metaDescription': 'A long sample article to try PageTOC on. Turn the extension on in Safari, open the outline, and jump around.',
+    'demo.notice': 'A sample page for trying PageTOC. Turn the extension on in Safari, then open the outline.',
+
     'hero.tagline': 'A table of contents for any long page in Safari.',
     'hero.subtitle': 'PageTOC reads a page’s own headings and builds an outline you can jump around in — on iPhone, iPad and Mac.',
     'hero.status': 'Coming to the App Store',
@@ -81,6 +88,11 @@ export const ui = {
     'nav.how': '怎么用',
     'nav.privacy': '隐私',
     'nav.support': '支持',
+
+    'demo.back': '← 返回 PageTOC',
+    'demo.metaTitle': '示例页面 —— PageTOC for Safari',
+    'demo.metaDescription': '一篇用来试 PageTOC 的样例长文。在 Safari 里启用扩展，唤出目录，随意跳转。',
+    'demo.notice': '这是一篇用来试用 PageTOC 的样例长文。在 Safari 里启用扩展，然后唤出目录。',
 
     'hero.tagline': '给 Safari 里的长网页，补上一份目录。',
     'hero.subtitle': 'PageTOC 读取页面自身的标题层级，生成可以随意跳转的目录 —— iPhone、iPad、Mac 都能用。',

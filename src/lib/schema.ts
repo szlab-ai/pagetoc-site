@@ -39,7 +39,7 @@ const copy = {
       'Collects no data: no account, no analytics, no server, and no networking code at all',
     ],
     breadcrumbHome: 'Home',
-    pageNames: { privacy: 'Privacy Policy', support: 'Support' },
+    pageNames: { privacy: 'Privacy Policy', support: 'Support', demo: 'Sample page' },
   },
   zh: {
     siteName: 'PageTOC',
@@ -56,11 +56,11 @@ const copy = {
       '不收集任何数据：没有账号、没有统计、没有服务器，也没有任何网络代码',
     ],
     breadcrumbHome: '首页',
-    pageNames: { privacy: '隐私政策', support: '支持' },
+    pageNames: { privacy: '隐私政策', support: '支持', demo: '示例页面' },
   },
 } as const;
 
-type PageKind = 'home' | 'privacy' | 'support';
+type PageKind = 'home' | 'privacy' | 'support' | 'demo';
 
 export interface SchemaInput {
   lang: Lang;

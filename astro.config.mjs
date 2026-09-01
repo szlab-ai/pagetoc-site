@@ -21,8 +21,11 @@ export default defineConfig({
         defaultLocale: 'en',
         locales: { en: 'en', zh: 'zh-Hans' },
       },
-      // 排除 noindex 的根跳转页和 404，避免给搜索引擎提交不该收录的 URL。
-      filter: (page) => !/\/pagetoc-site\/$/.test(page) && !/\/404\/?$/.test(page),
+      // 排除 noindex 的根跳转页、404 和 /demo/，避免给搜索引擎提交不该收录的 URL。
+      // /demo/ 是一篇讲 Array.prototype.map() 的样例长文，对产品站来说是离题内容，
+      // 它的作用是「打开就能试」而不是被收录（页面本身也带 noindex）。
+      filter: (page) =>
+        !/\/pagetoc-site\/$/.test(page) && !/\/404\/?$/.test(page) && !/\/demo\/?$/.test(page),
     }),
   ],
   vite: {

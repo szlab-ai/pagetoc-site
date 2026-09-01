@@ -1,0 +1,101 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Prose from '../../components/Prose.astro';
+import { useTranslations } from '../../i18n/utils';
+
+/**
+ * /en/demo/ 的中文对应页。存在的理由不是截图（截图只做英文），而是站点的
+ * LangToggle 与 hreflang 会在 /en/ 和 /zh/ 之间直接换路径 —— 少一半就会指向 404。
+ * 标题层级与英文版保持一一对应，这样两边生成的目录结构是同一个形状。
+ */
+const t = useTranslations('zh');
+
+const syntax = `map(callbackFn)
+map(callbackFn, thisArg)`;
+
+const shapeExample = `const rows = users.map((user) => ({
+  id: user.id,
+  label: \`\${user.firstName} \${user.lastName}\`,
+  active: user.lastSeen > cutoff,
+}));`;
+
+const indexExample = `const numbered = lines.map((line, i) => \`\${i + 1}. \${line}\`);`;
+
+const forEachExample = `// 分配了一个没人读的数组
+items.map((item) => render(item));
+
+// 说的就是它要做的事
+items.forEach((item) => render(item));`;
+
+const parseIntBad = `["1", "7", "11"].map(parseInt);   // [1, NaN, 3]`;
+const parseIntGood = `["1", "7", "11"].map((s) => parseInt(s, 10));   // [1, 7, 11]`;
+---
+<BaseLayout
+  title={t('demo.metaTitle')}
+  description={t('demo.metaDescription')}
+  lang="zh"
+  page="demo"
+  bare
+  noindex
+>
+  <Prose title="Array.prototype.map()">
+    <p class="text-sm text-muted">{t('demo.notice')}</p>
+
+    <p>把原数组的每个元素交给你提供的函数跑一遍，用返回值组成一个新数组。原数组不会被改动。</p>
+
+    <h2>语法</h2>
+    <pre><code>{syntax}</code></pre>
+    <p>它从下标 <code>0</code> 开始向后走，每个元素调用一次 <code>callbackFn</code>，把返回值收集成一个等长的新数组。</p>
+
+    <h3>参数</h3>
+    <ul>
+      <li><code>callbackFn</code> —— 每个元素都会调用一次。它收到三个参数：元素本身、它的下标、正在遍历的数组。它返回什么，结果数组对应位置上就是什么。</li>
+      <li><code>thisArg</code> —— 可选。在 <code>callbackFn</code> 内部作为 <code>this</code> 的值。对箭头函数无效，箭头函数的 <code>this</code> 取自它被写下来的地方。</li>
+    </ul>
+
+    <h3>返回值</h3>
+    <p>一个新数组。长度永远等于原数组的长度，原数组有空洞时也一样 —— 空洞的处理见下文。</p>
+
+    <h2>说明</h2>
+    <p>可以把它理解成一次「换形状」：数量不变，每一个都变成别的东西。这就是它的全部意图。关于它的大部分困惑，都来自要求它做别的事 —— 筛选、求和，或者跑副作用。</p>
+    <p>回调固定收到三个参数，顺序固定，这一点被低估的次数比想象中多：一个恰好接受第二个参数的函数，会悄无声息地拿到下标。</p>
+
+    <h3>回调被跳过的情况</h3>
+    <p>数组可以有空洞：<code>[1, , 3]</code> 在下标 1 处是个缺口。空洞不会触发回调，但会原样保留在结果里。所以返回的数组长度相同、空洞位置相同，而你的回调从头到尾没见过它。</p>
+    <p>值得知道这件事，是因为空洞很容易被无意造出来 —— 越过末尾赋值，或者用 <code>delete</code> 删元素而不是把它切出去。</p>
+
+    <h3>遍历过程中修改数组</h3>
+    <p>要访问的范围在第一次调用之前就固定了。回调里追加的元素永远不会被访问到；在被访问到之前被改掉的元素，看到的是改后的值；在被访问到之前被删掉的元素会被直接跳过。</p>
+    <p>这些都不是「可以在回调里改数组」的理由。写在这里是为了当它真的发生时，你不会把这套行为当成自己代码里的 bug。</p>
+
+    <h2>示例</h2>
+
+    <h3>把对象映射成新形状</h3>
+    <p>实际工作里最常见的用法：把来自别处的记录，削成视图真正需要的那几个字段。</p>
+    <pre><code>{shapeExample}</code></pre>
+    <p>注意对象字面量外面那对圆括号。没有它，花括号会被读成函数体，函数什么都不返回，于是你得到一个全是 <code>undefined</code> 的数组，而且哪里都不会报错。</p>
+
+    <h3>用下标参数</h3>
+    <p>第二个参数是下标 —— 这样就不必在循环外面自己维护一个计数器。</p>
+    <pre><code>{indexExample}</code></pre>
+
+    <h2>常见错误</h2>
+
+    <h3>丢掉返回的数组</h3>
+    <p>如果回调的返回值被扔掉，那它白白遍历了整个数组，还白白分配了一个新数组。当目的是副作用而不是新数组时，<code>forEach</code> 说的就是这个意思，普通的 <code>for</code> 循环说得更清楚。</p>
+    <pre><code>{forEachExample}</code></pre>
+
+    <h3>直接把 parseInt 传进去</h3>
+    <p>最经典的一个，而且它是「回调固定收三个参数」的直接后果：</p>
+    <pre><code>{parseIntBad}</code></pre>
+    <p><code>parseInt</code> 的第二个参数是进制，而拿到的是下标。所以第二次调用是按 1 进制解析 <code>"7"</code>，第三次是按 2 进制解析 <code>"11"</code>。包一层就好了，而且无论如何都更清楚：</p>
+    <pre><code>{parseIntGood}</code></pre>
+
+    <h2>性能</h2>
+    <p>对绝大多数应用会碰到的数组规模，它的开销不值得想，而可读性非常值钱。链式的多次遍历各自会分配一个中间数组，但那要到你本来就会注意到分配的规模才开始有影响。</p>
+    <p>先测量再重构。一条读起来清楚、每次交互只跑一遍的链，不是性能问题；把它改写成一个命令式循环，是拿确定的东西去换假设的东西。</p>
+
+    <h2>兼容性</h2>
+    <p>今天 JavaScript 能跑的地方都有它，浏览器和服务端都一样。它进入语言标准的时间足够久，已经不值得为它带 polyfill。</p>
+  </Prose>
+</BaseLayout>

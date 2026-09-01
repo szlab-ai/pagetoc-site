@@ -1,0 +1,107 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Prose from '../../components/Prose.astro';
+import { useTranslations } from '../../i18n/utils';
+
+/**
+ * 一篇给人「打开就能试 PageTOC」的样例长文，同时是 App Store 截图的拍摄现场。
+ * 设计见 SimpleTOC 的 docs/superpowers/specs/2026-09-01-store-screenshots-design.md。
+ *
+ * 内容是自己写的，不是从任何文档站搬来的。真实文档页会把它的字标和 logo 一起带进
+ * 画面，而那些是商标，即使正文是开放许可的也一样（审核指南 5.2.1 / 5.2.2 管到元数据，
+ * 截图算元数据）。自己写还换来一件更要紧的事：标题层级可以按需要排 —— 三级，
+ * 因为 tocDepth 默认就是 3，截图里必须是用户装完看到的样子。
+ *
+ * 标题 Array.prototype.map() 本身没有风险：ECMA-262 的标准库 API 名，不是谁的商标。
+ */
+const t = useTranslations('en');
+
+const syntax = `map(callbackFn)
+map(callbackFn, thisArg)`;
+
+const shapeExample = `const rows = users.map((user) => ({
+  id: user.id,
+  label: \`\${user.firstName} \${user.lastName}\`,
+  active: user.lastSeen > cutoff,
+}));`;
+
+const indexExample = `const numbered = lines.map((line, i) => \`\${i + 1}. \${line}\`);`;
+
+const forEachExample = `// allocates an array nobody reads
+items.map((item) => render(item));
+
+// says what it means
+items.forEach((item) => render(item));`;
+
+const parseIntBad = `["1", "7", "11"].map(parseInt);   // [1, NaN, 3]`;
+const parseIntGood = `["1", "7", "11"].map((s) => parseInt(s, 10));   // [1, 7, 11]`;
+---
+<BaseLayout
+  title={t('demo.metaTitle')}
+  description={t('demo.metaDescription')}
+  lang="en"
+  page="demo"
+  bare
+  noindex
+>
+  <Prose title="Array.prototype.map()">
+    <p class="text-sm text-muted">{t('demo.notice')}</p>
+
+    <p>Builds a new array by running every element of the original through a function you supply. The original array is left alone.</p>
+
+    <h2>Syntax</h2>
+    <pre><code>{syntax}</code></pre>
+    <p>The method walks the array from index <code>0</code> upward, calls <code>callbackFn</code> once per element, and collects the return values into a new array of the same length.</p>
+
+    <h3>Parameters</h3>
+    <ul>
+      <li><code>callbackFn</code> — run for every element. It receives three arguments: the element, its index, and the array being walked. Whatever it returns becomes the corresponding element of the result.</li>
+      <li><code>thisArg</code> — optional. The value to use as <code>this</code> inside <code>callbackFn</code>. It has no effect on arrow functions, which take <code>this</code> from where they were written.</li>
+    </ul>
+
+    <h3>Return value</h3>
+    <p>A new array. Its length always equals the length of the original, including when the original has holes — see below for what happens to those.</p>
+
+    <h2>Description</h2>
+    <p>Think of it as a shape change: same number of things, each one turned into something else. That is the whole idea, and most confusion about the method comes from asking it to do something else — filtering, summing, or running side effects.</p>
+    <p>The callback is called with three arguments in a fixed order, which matters more often than people expect. A function that happens to accept a second parameter will silently receive the index.</p>
+
+    <h3>When the callback is skipped</h3>
+    <p>Arrays can have holes: <code>[1, , 3]</code> has a gap at index 1. The callback is not called for holes, but they are preserved in the result. So the returned array is the same length, with a hole in the same place, and your callback never sees it.</p>
+    <p>This is worth knowing because holes are easy to create by accident — assigning past the end of an array, or using <code>delete</code> on an element instead of splicing it out.</p>
+
+    <h3>Mutating the array while mapping</h3>
+    <p>The range of elements to visit is fixed before the first call. Elements appended by the callback are never visited. Elements changed by the callback before they are reached will be seen in their changed state. Elements deleted before they are reached are simply skipped.</p>
+    <p>None of this is a reason to mutate inside a callback. It is a description of what happens if you do, so that the behaviour is not mistaken for a bug in your own code.</p>
+
+    <h2>Examples</h2>
+
+    <h3>Mapping objects to a new shape</h3>
+    <p>The most common real use: taking records from somewhere and reducing them to the fields a view actually needs.</p>
+    <pre><code>{shapeExample}</code></pre>
+    <p>Note the parentheses around the object literal. Without them the braces are read as a function body, the function returns nothing, and you get an array of <code>undefined</code> with no error anywhere.</p>
+
+    <h3>Using the index argument</h3>
+    <p>The second argument is the index, which is how you number things without keeping a counter outside the loop.</p>
+    <pre><code>{indexExample}</code></pre>
+
+    <h2>Common mistakes</h2>
+
+    <h3>Ignoring the returned array</h3>
+    <p>If the callback’s return value is thrown away, the method has done a full pass over the array and allocated a new one for nothing. When the goal is a side effect rather than a new array, <code>forEach</code> says so, and a plain <code>for</code> loop says it even more clearly.</p>
+    <pre><code>{forEachExample}</code></pre>
+
+    <h3>Passing parseInt directly</h3>
+    <p>This is the classic one, and it is a direct consequence of the three-argument callback:</p>
+    <pre><code>{parseIntBad}</code></pre>
+    <p><code>parseInt</code> takes a second parameter — the radix — and the index is handed to it. So the second call parses <code>"7"</code> in base 1, and the third parses <code>"11"</code> in base 2. Wrapping the call fixes it, and is clearer regardless:</p>
+    <pre><code>{parseIntGood}</code></pre>
+
+    <h2>Performance notes</h2>
+    <p>For the array sizes most applications deal with, the cost is not worth thinking about, and the readability is worth a great deal. Chained passes each allocate an intermediate array, which only starts to matter at sizes where you would notice the allocation anyway.</p>
+    <p>Measure before restructuring. A chain that reads clearly and runs once per interaction is not a performance problem, and rewriting it into a single imperative loop trades something certain for something hypothetical.</p>
+
+    <h2>Compatibility</h2>
+    <p>Available everywhere JavaScript runs today, in browsers and on servers alike. It has been part of the language standard long enough that no polyfill is worth carrying.</p>
+  </Prose>
+</BaseLayout>
