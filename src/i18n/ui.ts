@@ -24,7 +24,8 @@ export const ui = {
 
     'hero.tagline': 'A table of contents for any long page in Safari.',
     'hero.subtitle': 'PageTOC reads a page’s own headings and builds an outline you can jump around in — on iPhone, iPad and Mac.',
-    'hero.status': 'Coming to the App Store',
+    'hero.status': 'Available on the App Store',
+    'hero.appStoreAlt': 'Download PageTOC on the App Store',
     'hero.platforms': 'Safari on iOS 17+, iPadOS 17+ and macOS 14+',
 
     'shots.heading': 'What it looks like',
@@ -96,7 +97,8 @@ export const ui = {
 
     'hero.tagline': '给 Safari 里的长网页，补上一份目录。',
     'hero.subtitle': 'PageTOC 读取页面自身的标题层级，生成可以随意跳转的目录 —— iPhone、iPad、Mac 都能用。',
-    'hero.status': '即将上架 App Store',
+    'hero.status': '已上架 App Store',
+    'hero.appStoreAlt': '在 App Store 下载 PageTOC',
     'hero.platforms': '适用于 iOS 17+、iPadOS 17+ 与 macOS 14+ 的 Safari',
 
     'shots.heading': '它长什么样',
